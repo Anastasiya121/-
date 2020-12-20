@@ -1,4 +1,5 @@
-# -//Директивы препроцессора
+# -лаб1
+//Директивы препроцессора
 #include <iostream>
 #include <locale.h>
 #include <math.h>
