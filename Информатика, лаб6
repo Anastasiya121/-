@@ -1,0 +1,52 @@
+#include <fstream>
+#include <iostream>
+#include<Windows.h>
+#include<cstring>
+#include <stdio.h>
+#include  <wchar.h>
+#include <ctype.h>
+using namespace std;
+
+int main()
+{
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+//Размер строки 
+    const int size = 255;
+//Строка цифр
+    char clas[] = "1234567890"; 
+//Строка, состоящая из символов 
+    char str[size],
+//Указатель на строку str, на первый элемент
+    * c = str,
+//Указатель на нулевой элемент
+    * ch = NULL; 
+    puts("Введите строку: \n");
+//Ввод строки
+    gets_s(str); 
+    puts("\n");
+//Указатель на конец строки
+    char* end = str + strlen(str);
+//Цикл крутится пока указатель на первой элемент больше указателя на последний элемент
+    while (c < end) {  
+//Поиск лексемы отделённой пробелом
+        c = strtok(c, " "); 
+//Возвращает указатель на символ, являющийся первым вхождением любого из символов из class в строку c, если его нет, возвращает NULL
+        ch = strpbrk(c, clas); 
+//Проверка есть ли в слове цифра, если нет, то переход к следующей лексеме
+        if (ch == NULL) {  
+            c += strlen(c) + 1;
+            continue;
+        }
+//Переход к след символу
+        ch++; 
+//Проверка на вторую цифру
+        ch = strpbrk(ch, clas); 
+//Если второй цифры нет, то выводит слово
+        if (ch == NULL)  
+            printf("%s\n", c);
+        c += strlen(c) + 1;
+    }
+    
+    return 0;
+}
