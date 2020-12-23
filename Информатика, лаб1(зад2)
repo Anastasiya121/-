@@ -1,0 +1,27 @@
+#include <iostream>
+#include <locale.h>
+using namespace std;
+int main() {
+	setlocale(LC_ALL, "Russian");
+	int n, m, a;
+//Ввод начальных значений m, n
+	cout << "Введите n: " << endl;;
+	cin >> n;
+	cout << endl;
+	cout << "Введите m :" << endl;;
+	cin >> m;	
+	bool b, c;
+//Вычисление значений простого и логических выражений и вывод их на экран
+	a = (n++ * m);
+	b = (n++ < m);
+	c = (m-- > m);
+	cout << endl;
+	cout << "Значение выражения n++ *m=" << a<<endl;
+	cout << endl;
+	cout << "Значение выражения n++<m=" << b << endl;
+	cout << endl;
+	cout << "Значение выражения m-->m=" << c << endl;
+	cout << endl;
+	cout << "n=" << n << "  " << "m=" << m << endl;
+	return 0;
+}
