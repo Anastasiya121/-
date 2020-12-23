@@ -1,0 +1,228 @@
+#include <iostream>
+#include<Windows.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <ctime>
+#include <math.h>
+#include <conio.h>
+
+using namespace std;
+
+const int l_fam = 10, l_name = 10;
+//Объявление структуры
+struct  Man {
+	char fam[l_fam + 1];
+	char name[l_name + 1];
+	int r_;
+};
+//Объявление функции с умалчиваемыми параметрами для печати структуры 
+void print(const char* fam = "Петров", const char* name = "Иван", int r = 1) { cout << "\n" << fam << ' ' << name << ' ' << r; }
+//Объявление функции с переменным числом параметров для определения среднего арифметического элементов
+float sr_ar(int a, ...);
+//Объявление перегруженных функций типа int, double, char для нахождения минимального элемента
+int min_(const int* mas, const int n);
+double min_(const double* mas, const int  n);
+char* min_(char** mas, const  int  n);
+//Объявление шаблона функций для вычисления минимального элемента
+template <class T> T Min(T* b, int n);
+//Тип-указатель на функцию уравнения
+typedef float(*fptr)(float);
+//Функция, реализующая метод итераций
+float root(fptr f, float e);
+//Функция находит корень уравнения
+float testf(float x);
+int main()
+{
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	srand(time(0));
+
+	Man man;
+	char buf[3];
+	char fam[l_fam + 1];
+	char name[l_name + 1];
+	cout << "Задание 1" << endl;
+	cout << endl;
+	puts("Введите фамилию: "); gets_s(fam);
+	if (strlen(fam) < l_fam)
+		for (int i = strlen(fam); i < l_fam; i++)
+			fam[i] = ' ';
+	fam[l_fam] = 0;
+//Копирование введённого значения в структуру
+	strncpy(man.fam, fam, l_fam + 1);
+
+	puts("Введите имя: "); gets_s(name);
+	if (strlen(name) < l_name)
+		for (int i = strlen(name); i < l_name; i++)
+			name[i] = ' ';
+	name[l_name] = 0;
+	strncpy(man.name, name, l_name + 1);
+
+	do {
+		puts("Введите рейтинг: "); gets_s(buf);
+	} while ((man.r_ = atol(buf)) == 0);
+	cout << endl;
+	cout<<"Результаты вызова функции с умалчиваемыми параметрами"<<endl;
+//Вызов функции с параметрами заданными явно
+	print(man.fam, man.name, man.r_);
+//Вызов функции с опущенными параметрами
+	print();
+//Вызов функции, часть параметров задана явно, а часть опущена
+	print(man.fam, man.name);
+	cout << endl;
+	cout << endl;
+	cout << "Задание 2" << endl;
+	cout <<  endl;
+//Вызов функций с различным числом параметров
+	cout << "Среднее арифметическое 4 элементов в списке параметров: " << sr_ar(4, 1, 2, 3, 4) << endl;
+	cout << "Среднее арифметическое 6 элементов в списке параметров: " << sr_ar(6, 1, 2, 3, 4, 5, 6) << endl;
+	cout << "Среднее арифметическое 8 элементов в списке параметров: " << sr_ar(8, 1, 2, 3, 4, 5, 6, 7, 8) << endl;
+	cout << endl;
+	cout << endl;
+
+	int i, m;
+	cout << "Задание 3" << endl;
+	cout <<  endl;
+	cout << "Введите размерность массива:" << endl; cin >> m;
+//Выделение памяти под динамический массив пол числа типа int
+	int* a = new int[m];
+//Выделение памяти под динамический массив пол числа типа double
+	double* b = new double[m];
+	const int l = 60;
+	char s[l];
+//Выделение памяти под динамический массив пол числа типа char
+	char** str = new char* [m];
+	cout << "Введите строки массива char:" << endl;
+//Формирование массивов
+	for (int i = 0; i < m; i++) {
+		a[i] = rand() % 41 - 20;
+		b[i] = (double)(1 + rand() % 100) / 100;
+		cin>>s;
+		int len = strlen(s);
+		str[i] = new char[len + 1];
+		strcpy(str[i], s);
+	}
+
+//Вызов перегруженных функций, вычисляющих минимальный элемент массива
+	cout << "Минимальный элемент в массиве типа int: " << min_(a, m) << endl;
+	cout << endl;
+	cout << "Минимальный элемент в массиве типа double: " << min_(b, m) << endl;
+	cout << endl;
+cout << "Минимальный элемент в массиве типа char: " << min_(str, m) << endl;
+	cout << endl;
+	cout << endl;
+//Вызов функций, вычисляющих минимальный элемент по шаблону
+	cout << "Шаблоны - Минимальный элемент в массиве из целых чисел: " << Min(a, m) << endl;
+	cout << endl;
+	cout << "Шаблоны - Минимальный элемент в массиве из вещ чисел: " << Min(b, m) << endl;
+	cout << endl;
+	cout << endl;
+	delete[]a; delete[]b; delete[]str;
+	cout << "Задание 4" << endl;
+	cout << endl;
+//В функцию root передается указатель на функцию и точность 
+	float res = root(testf, 0.001);
+	cout << "X = " << res << endl;
+	return 0;
+}
+
+//Вычисление среднего арифметического элементов
+float sr_ar(int a, ...) {
+	va_list arg;  
+	va_start(arg, a);
+
+	float sum = 0, n = 0;
+	for (int i = 0; i < a; i++) {
+		int x = va_arg(arg, int);
+		sum += x;
+		n++;
+	}
+	float sr = sum / n;
+	va_end(arg);
+	return sr; }
+//Нахождение минимального элемента int
+int min_(const int* mas, const int n) {
+	cout << "Массив чисел типа int : " << endl;
+	for (int i = 0; i < n; i++) {
+		cout << "mas[" << i << "]=" << mas[i];
+		cout << endl;
+	}
+	int min = mas[0];
+	for (int i = 0; i < n; i++) {
+		if (mas[i] < min) min = mas[i];
+	}
+	cout << endl;
+	return min;
+}
+//Нахождение минимального элемента double
+double min_(const double* mas, const int  n) {
+	cout << "Массив чисел типа double  : " << endl;
+	for (int i = 0; i < n; i++) {
+		cout << "mas[" << i << "]=" << mas[i];
+		cout << endl;
+	}
+	double min = mas[0];
+	for (int i = 0; i < n; i++) {
+		if (mas[i] < min) min = mas[i];
+	}
+	cout << endl;
+	return min;
+}
+//Нахождение минимального элемента char
+char* min_(char** mas, const int  n) {
+	cout << "Массив чисел типа char  : " << endl;
+	for (int i = 0; i < n; i++) {
+		cout << "mas[" << i << "]=" << mas[i];
+		cout << endl;
+	}
+	char* min1 = new char[n];
+	int min = strlen(mas[0]);
+	for (int i = 0; i < n; i++) {
+		if (strlen(mas[i]) < min) {
+			min = strlen(mas[i]);
+			min1 = mas[i];
+		}
+		else if (strlen(mas[i]) == min) {
+			min = strlen(mas[i]);
+			min1 = mas[i];
+		}
+	}
+	cout << endl;
+	return min1;
+}
+
+//Шаблон функции нахождение минимального элемента 
+template <class T> T Min(T* b, int n) {	
+	cout << "Массив чисел  : " << endl;
+	for (int i = 0; i < n; i++) {
+		cout << "mas[" << i << "]=" << b[i];
+		cout << endl;
+	}
+	double min = b[0];
+	for (int i = 0; i < n; i++) {
+		if (b[i] < min) min = b[i];
+	}
+	cout << endl;
+	return min;
+}
+//Реализация метода итераций
+float root(fptr f, float e)
+{
+	float x; float rez;
+	float x0 = 0, x1;
+	do
+	{
+		x1 = x0;
+//Присваиваем значение найденное в функции
+		x0 = (*f)(x1);
+		
+	} while (fabs(x0 - x1) > e);
+	return x0;
+}
+
+//Уравнение для вычисления корня
+float testf(float x)
+{
+	return  x - 0.25 * (0.25 * pow(x, 3) + x - 1.2502);
+}
