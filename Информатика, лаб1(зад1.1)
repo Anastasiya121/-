@@ -1,0 +1,35 @@
+"""
+Листинг программы при float:
+//Директивы препроцессора
+#include <iostream>
+#include <locale.h>
+#include <math.h>
+//Пространство имён std
+using namespace std;
+//Главная функция
+int main() {
+//Русский язык в консоли
+	setlocale(LC_ALL, "Russian");
+	//Промежуточные переменные
+	float a, b, c, d, e, f, g, chis, znam, res;
+	a = 1000;
+	b = 0.0001;
+//Вычисление выражений и вывод результатов
+	c = pow(a + b, 3);
+	cout << "c=" << c << endl;;
+	d = pow(a, 3);
+	cout << "d=" << d<<endl;
+	e = 3 * a * (pow(b, 2));
+	cout << "e=" << e << endl;
+	f = pow(b, 3);
+	cout << "f=" << f << endl;
+	g = 3 * (pow(a, 2)) * b;
+	cout << "g=" << g << endl;
+	chis = c - d;
+	cout << "chis=" << chis << endl;
+	znam = e + f + g;
+	cout << "znam=" << znam << endl;
+	res = chis / znam;
+	cout << "Результат выражения при float=" << res << endl;
+	return 0;
+}
