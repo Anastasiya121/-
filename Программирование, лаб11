@@ -1,0 +1,227 @@
+#include <iostream>
+#include<Windows.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fstream>
+//Объявление линейного списка
+struct Man {
+int key;
+//Указатель на следующий элемент списка
+Man* next;
+};
+using namespace std;
+//Объявление функции, создание списка 
+Man* make(int n);
+//Объявление функции, печать списка
+Man* print_Man(Man* first);
+//Объявление функции, удаление элемента из списка
+Man* del(Man* first1);
+//Объявление функции, добавление элементов в список
+Man* vst(Man* first);
+//Объявление функции, запись списка в файл
+int print(Man* first);
+//Объявление функции, уничтожение списка
+Man* delMan(Man* first);
+//Объявление функции, восстановление списка из файла
+Man* vosMan(const char* filename, Man* first);
+
+int main()
+{
+SetConsoleCP(1251);
+SetConsoleOutputCP(1251);
+int n;
+cout << "Введите количество элементов в списке:";
+cin >> n;
+cout << endl;
+//Имя файла для хранения списка
+char filename[] = "c:\\Новая папка\\kkk.txt";
+Man* first1, * first2, * first3, * first4, * first5;
+//Вызов функции создания списка 
+first1 = make(n);
+cout << endl;
+//Вызов функции удаления элемента из списка
+first2 = del(first1);
+cout << endl;
+//Вызов функции добавления элементов в список
+first3 = vst(first2);
+cout << endl;
+// Вызов функции записи списка в файл
+print(first3);
+cout << endl;
+//Вызов функции уничтожения списка
+first4 = delMan(first3);
+cout << endl;
+//Вызов функции восстановления списка из файла
+first5 = vosMan(filename, first4);
+cout << endl;
+//Вызов функции уничтожения списка
+delMan(first5);
+return 0;
+}
+//Определение функции создания списка 
+Man* make(int n) {
+Man* first, * p;
+first = NULL;
+//Заполнение списка числами от 1 до n
+for (int i = n; i > 0; i--)
+{
+	p = new(Man);
+	p->key = i;
+	p->next = first;
+	first = p;
+}
+print_Man(first);
+return first;
+}
+//Определение функции печати списка
+Man* print_Man(Man* first) {
+cout << "Элементы списка:" << endl;
+if (first == NULL) cout << "Список пустой!";
+Man* p = first;
+//Печать списка, пока не достигнем конца
+while (p != NULL)
+{
+	cout << p->key << ' ';
+	p = p->next;
+}
+cout << endl;
+return first;
+}
+//Определение функции удаления элемента из списка
+Man* del(Man* first) {
+int num;
+cout<<"Введите номер удаляемого элемента:";
+cin >> num;
+cout << endl;
+Man* w = first;
+Man* ptr;
+Man* Current = first;
+//Просмотр элементов списка до заданного номера
+for (int i = 1; i < num && Current != NULL; i++)
+// Присваивание следующего значения
+Current = Current->next;
+//Проверка на корректность
+if (Current != NULL) {
+//Если первый элемент нового списка равен элементу исходного удаляем первый элемент
+	if (Current == first) {
+		first = first->next;
+		delete(Current);
+		Current = first;
+	}
+//Иначе удаляем не первый элемент
+	else {
+		ptr = first;
+		while (ptr->next != Current)
+			ptr = ptr->next;
+		ptr->next = Current->next;
+		delete(Current);
+		Current = ptr;
+	}
+}
+print_Man(first);
+return  first;
+}
+//Определение функции добавления элементов в список
+Man* vst(Man* first) {
+int Number, kol;
+cout << "Введите номер после которого необходимо вставить  элемента:";
+cin >> Number;
+cout << endl;
+cout << "Введите кол-во элементов для вставки:";
+cin >> kol;
+cout << endl;
+//Создание нового списка
+Man* NewItem1 = new(Man);
+NewItem1 = NULL;
+//Указатель на список
+Man* p1;
+//Заполнение списка новых элементов
+for (int i = kol; i > 0; i--)
+{
+	p1 = new(Man);
+	p1->key = i;
+	p1->next = NewItem1;
+	NewItem1 = p1;
+}
+//Если список пуст - создаем первый элемент списка
+if (first == NULL) {
+	first = NewItem1; 
+}
+//Список не пуст
+else {
+	Man* Current = first;
+	int i = 1; int j = 0;
+//Просматриваем список до элемента с заданным номером
+	for (i; i < Number && Current != NULL; i++)
+		Current = Current->next;
+	if (Current != NULL)
+//Установление связи нового узла с последующим
+		NewItem1->next = Current->next;
+//Установление связи предыдущего узла с новым
+	Current->next = NewItem1;
+}
+print_Man(first);
+return first;
+}
+//Определение функции записи списка в файл
+int print(Man* first) {
+//Создание и открытие файла
+ofstream fout("c:\\Новая папка\\kkk.txt");
+if (!fout) {
+	cout << "Ошибка открытия файла" << endl;
+	return 1;
+}
+//Указатель на список
+Man* w = first;
+//Запись списка в файл
+while (w != NULL)
+{
+	fout << w->key;
+	w = w->next;
+}
+fout.close();
+return 0;
+}
+//Определение функции уничтожения списка
+Man* delMan(Man* first) {
+//Вспомогательные указатели на список
+Man* x, * t;
+x = first;
+t = first;
+//Удаление каждого узла списка
+while (x != NULL) {
+	t = x->next;
+	delete x;
+	x = t;
+}
+//Список пуст
+first = NULL;
+print_Man(first);
+return first;
+}
+//Определение функции восстановления списка из файла
+Man* vosMan(const char* filename, Man* first) {
+//Открытие файла для чтения
+ifstream fout(filename, ios::in | ios::_Nocreate);
+if (!fout) {
+	cout << "Ошибка открытия файла" << endl;
+	return 0;
+}
+//Элемент файла
+int key;
+Man* head, * p;
+head = NULL;
+//Считывание каждого элемента файла и занесение его в новый список, пока не достигнут конец файла
+while (!fout.eof()) {
+	fout >> key;
+	p = new(Man);
+	p->key = key;
+	p->next = head;
+	head = p;
+}
+cout<<"Восстановленный список: " << endl;
+print_Man(head);
+fout.close();
+return head;
+}
