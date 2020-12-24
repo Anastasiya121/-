@@ -1,0 +1,45 @@
+#include <iostream>
+#include<Windows.h>
+#include <stdio.h>
+//Включение класса комплексных чисел
+#include <complex>
+
+using namespace std;
+//Объявление функции, вычисляющей разность целых чисел
+int Raznost_(int a, int b);
+//Объявление функции, вычисляющей разность комплексных чисел
+complex<double>Raznost_(complex<double>a, complex<double>b);
+
+int main()
+{
+SetConsoleCP(1251);
+SetConsoleOutputCP(1251);
+int a, b;
+cout<<"Введите два целых числа для вычитания: "<< endl;
+cin >>a >>b;
+//Вызов функции разности целых чисел, передача введённых параметров и вывод результата
+cout << Raznost_(a, b) << endl;
+//Первое комплексное число вида: 4+5i
+complex <double> z1(4.0, 5.0);
+//Второе комплексное число вида: 2-10i
+complex <double> z2(2.0, -10.0);
+cout << "Первое комплексное число: " << z1 << endl;
+cout << "Второе комплексное число: " << z2 << endl;
+//Вызов функции разности комплексных чисел, передача параметров и вывод результата
+cout << Raznost_(z1, z2) << endl;
+return 0;
+}
+//Определение функции, вычисляющей разность целых чисел
+int Raznost_(int a, int b) {
+int s = 0;
+s = a - b;
+cout << "Разность целых чисел: ";
+return s;
+}
+//Определение функции, вычисляющей разность комплексных чисел
+complex <double> Raznost_(complex <double> a, complex <double> b) {
+complex <double> s = 0;
+s = a - b;
+cout <<"Разность комплексных чисел:" ;
+return s;
+}
