@@ -1,0 +1,208 @@
+#include <iostream>
+#include<Windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+// Длина поля под ФИО и адрес
+const int l_name = 30, l_adress = 40;
+//Объявление структуры
+struct  Man {
+	char name[l_name + 1];
+	char adress[l_adress + 1];
+	int telefon;
+	int vozrast;
+};
+using namespace std;
+//Определение функции, выполняющей запись структуры
+int zapis(FILE* f);
+//Определение функции, формирующей файл для записи
+int formirovanie(const char* filename1);
+//Определение функции печати
+int print(const char* filename);
+//Определение функции удаления элементов с заданным возрастом
+int del(const char* filename, const char* filename2);
+//Определение функции добавления элемента
+int dob(const char* filename, const char* filename1);
+
+int main()
+{
+SetConsoleCP(1251);
+SetConsoleOutputCP(1251);
+bool contin;
+char y_n[2];
+//Исходный файл
+const 	char filename1[] = "g:\\text1.bin";
+//Вспомогательный файл для удаления
+const 	char filename2[] = "g:\\text11.bin";
+//Вспомогательный файл для добавления
+const 	char filename3[] = "g:\\text.bin";
+//Цикл записи файла
+do {
+	contin = false;
+	if (formirovanie(filename1) != 0) {
+		puts("Ошибка при записи в файл");
+		return 1;
+	}
+	cout << endl;
+	puts("Продолжить (y/n)?");
+	gets_s(y_n);
+//Проверка записаны ли файл данные
+	if ((y_n[0] == 'y') || y_n[0] == 'Y') contin = true;
+} while (contin);
+//Вызов функции печати исходного файла
+print(filename1);
+cout << endl;
+//Вызов функции удаления с помощью вспомогательного файла
+del(filename1, filename2);
+cout << endl;
+//Вызов функции добавления с помощью вспомогательного файла
+dob(filename2, filename3);
+cout << endl;
+return 0;
+}
+//Определение функции, формирование исходного файла 
+int formirovanie(const char* filename1) {
+FILE* fout;
+if ((fout = fopen(filename1, "ab")) == NULL) {
+	puts("Ошибка открытия вых. файла\n");
+}
+//Вызов функции записи структуры в исходный файл
+zapis(fout);
+fclose(fout);
+return 0;
+}
+//Определение функции, запись структуры 
+int zapis(FILE* f) {
+//Определение структуры
+Man man;
+char buf[80];
+char name[l_name + 1];
+char adress[l_adress + 1];
+
+puts("Введите ФИО:");
+gets_s(name);
+gets_s(name);
+if (strlen(name) < l_name)
+	for (int i = strlen(name); i < l_name; i++)
+		name[i] = ' ';
+name[l_name] = 0;
+//Копирование введённого имени в структуру с длиной не более l_name+1
+strncpy(man.name, name, l_name + 1);
+
+puts("Введите адрес: "); gets_s(adress);
+if (strlen(adress) < l_adress)
+	for (int i = strlen(adress); i < l_adress; i++)
+		adress[i] = ' ';
+adress[l_adress] = 0;
+strncpy(man.adress, adress, l_adress + 1);
+
+do {
+	puts("Введите номер телефона: "); gets_s(buf);
+//Перевод строки в длинное целое число
+} while ((man.telefon = atol(buf)) == 0);
+do {
+	puts("Введите возраст: "); gets_s(buf);
+//Перевод строки в целое число
+} while ((man.vozrast = atoi(buf)) == 0);
+
+//Занесение структуры в файл
+int str = fwrite(&man, sizeof(man), 1, f); 
+if (str == 1) return 0;
+else return 2;
+}
+//Определение функции, печать файла
+int print(const char* filename) {
+Man man;
+//Указатель на файл
+FILE* fout;
+if ((fout = fopen(filename, "rb")) == NULL) {
+	puts("Ошибка открытия  файла\n");
+	return 1;
+}
+printf("\n");
+printf("Содержание файла:\n");
+
+//Установка позиции с конца
+fseek(fout, 0, SEEK_END);
+// Значение длины файла в записях
+int n_rec = ftell(fout) / sizeof(man);
+int i = 0;
+while (true) {
+	if (i < 0 || i >= n_rec) break;
+//Установка позиции с начала
+	fseek(fout, i * sizeof(man), SEEK_SET);
+//Чтение построчно из файла и записывание в man
+	fread(&man, sizeof(man), 1, fout);
+	printf("%30s%10s%17i%5i\n", man.name, man.adress, man.telefon, man.vozrast);
+	i++;
+}
+return 0;
+}
+//Определение функции, удаление элемента с заданным возрастом
+int del(const char* filename, const char* filename2) {
+int vozr;
+Man man;
+FILE* f;
+//Открытие исходного файла для чтения в двоичном режиме
+if ((f = fopen(filename, "rb")) == NULL) {
+	puts("Ошибка открытия исходного файла\n");
+	return 1;
+}
+FILE* temp; 
+//Открытие вспомогательного файла для записи в двоичном режиме
+if ((temp = fopen(filename2, "wb")) == NULL) {
+	puts("Ошибка открытия вспомогательного файла\n");
+	return 1;
+}
+printf("Введите возраст для удаления:\n");
+scanf("%i", &vozr);
+//Выполняется чтение пока не достигнут конец файла
+while (fread(&man, sizeof(Man), 1, f)) {
+	//Проверка совпадает ли введённый возраст с возрастом структуры
+if (man.vozrast != vozr) {
+//Если нет, записываем значение в вспомогательный файл
+		fwrite(&man, sizeof(Man), 1, temp);
+	}
+//Если да, то не записываем в вспомогательный файл
+	else printf("Удалено\n");
+}
+fclose(f);
+fclose(temp);
+//Вызов функции печати вспомогательного файла
+print(filename2);
+return 0;
+}
+//Определение функции, добавление нового элемента
+int dob(const char* filename, const char* filename1) {
+//Номер записи
+int num;
+Man man;
+
+FILE* f;
+//Открытие 1-го вспомогательного файла для чтения в двоичном режиме
+if ((f = fopen(filename, "rb")) == NULL) {
+	puts("Ошибка открытия исходного файла\n");
+	return 1;
+}
+FILE* temp; 
+//Открытие 2-го вспомогательного файла для чтения в двоичном режиме
+if ((temp = fopen(filename1, "ab")) == NULL) {
+	puts("Ошибка открытия  вспомогательного файла\n");
+}
+int i = 0;
+printf("Введите номер элемента после которого необходимо добавить элемент:\n");
+scanf("%i", &num);
+
+//Выполняется чтение пока не достигнут конец файла
+while (fread(&man, sizeof(Man), 1, f)) {
+//Запись, если введённый номер не совпадает с номером записи…
+	fwrite(&man, sizeof(Man), 1, temp);
+//если совпадает, вызывается функция записи нового элемента
+	if (num == i)
+		zapis(temp);
+	i++;
+}
+fclose(f);
+fclose(temp);
+print(filename1);
+return 0;
+}
