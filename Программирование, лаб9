@@ -1,143 +1,256 @@
-#include <fstream>
-#include <iostream>
-#include<Windows.h>
-#include<cstring>
-#include <stdio.h>
-#include <ctype.h>
+#include <fstream> 
+#include <iostream> 
+#include<Windows.h> 
+#include<cstring> 
+#include <stdio.h> 
+#include <ctype.h> 
+
+
 
 using namespace std;
-//Объявление функции, формирование и запись файла
+
+//Объявление функции, формирование и запись файла 
 int mas(const char* filename, int n);
-//Объявление функции, печать файла
+//Объявление функции, печать файла 
 int print(const char* filename, int n);
-//Объявление функции, копирование строк
+//Объявление функции, копирование строк 
 int kopir(const char* filename, const char* filename1, int n);
-//Объявление функции, подсчёт количества символов в последнем слове
-int kol(const char* filename1,  int n);
+//Объявление функции, подсчёт количества символов в последнем слове 
+int kol(const char* filename1, int n);
+
+
 
 int main()
+
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	
+
 	int n;
 	cout << "Введите количество строк: " << endl;
 	cin >> n;
-//Имя файла F1
+	//Имя файла F1 
 	char filename[] = "c:\\Новая папка\\text2.txt";
-//Имя файла F2
+	//Имя файла F2 
 	char filename1[] = "c:\\Новая папка\\text3.txt";
-//Вызов функции формирования файла
+	//Вызов функции формирования файла 
 	mas(filename, n);
-// Вызов функции копирования строк
-	kopir(filename, filename1, n);	
-// Вызов функции подсчёта символов
+	// Вызов функции копирования строк 
+	kopir(filename, filename1, n);
+	// Вызов функции подсчёта символов 
 	kol(filename1, n);
 	return 0;
+
 }
-//Определение функции, формирование и запись файла
+
+//Определение функции, формирование и запись файла 
+
 int mas(const char* filename, int n) {
-//Длина строки
+
+	//Длина строки 
+
 	const int len = 300;
+
 	char s[len];
+
 	FILE* F1;
-//Открытие файла F1 для записи
+
+	//Открытие файла F1 для записи 
+
 	if ((F1 = fopen(filename, "wt")) == NULL) {
+
 		puts("Ошибка открытия вых. файла\n");
+
 		return 1;
+
 	}
+
 	cout << "Заполните строки" << endl;
-//Циклом заполняем файл строками, введёнными с клавиатуры
+
+	//Циклом заполняем файл строками, введёнными с клавиатуры 
+
 	for (int i = 0; i <= n; i++) {
+
 		gets_s(s);
+
 		fputs(s, F1);
+
 		fputs("\n", F1);
+
 	}
-	puts("\nВведённые элементы: \n");	
-	fclose(F1); 
+	fclose(F1);
+	puts("\nВведённые элементы: \n");
+
+	
+
 	print(filename, n);
+
 }
-//Определение функции, печать файла
+
+//Определение функции, печать файла 
+
 int print(const char* filename, int n) {
+
 	const int len = 300;
+
 	char s[len];
+
 	FILE* F1;
-//Открытие файла для чтения
+
+	//Открытие файла для чтения 
+
 	if ((F1 = fopen(filename, "r")) == NULL) {
+
 		puts("Ошибка открытия вых. файла\n");
+
 		return 1;
-	}	
-//Циклом выводим построчно данные 
+
+	}
+
+	//Циклом выводим построчно данные  
+
 	for (int i = 0; i <= n; i++) {
+
 		fgets(s, len, F1);
+
 		printf("%s", s);
+
 	}
-	fclose(F1); 
+
+	fclose(F1);
+
 	return 0;
+
 }
-//Определение функции, копирование строк 
-int kopir(const char* filename, const char* filename1, int n) {	
+
+//Определение функции, копирование строк  
+
+int kopir(const char* filename, const char* filename1, int n) {
+
 	const int len = 300;
+
 	char s[len];
+
 	FILE* finput;
-//Открытие файла F1 для чтения
+
+	//Открытие файла F1 для чтения 
+
 	finput = fopen(filename, "r+");
-	FILE* F2;
-//Открытие файла F2 для записи
-	if ((F2 = fopen(filename1, "wt")) == NULL) {
-		puts("Ошибка открытия вых. файла\n");
-		return 1;
-	}
-//i – номер строки, j – счётчик строк
-	int i, j = 0;
-	puts("\nС какой строчки необходимо скопировать?\n");
-	cin >> n;
-//Читаем файл F1 пока не дойдём до конца файла
-	while (fgets(s, len, finput)) {
-//Если дошли до нужной строки…
-		if (j >= n) {
-//то копируем её во второй файл
-			fputs(s, F2);
-		}
-		j++;
-	}
-	puts("\nВторой файл: \n");
-	fclose(finput); 
-	fclose(F2);
-	//Вызов функции печати
-	 print(filename1, n);
-}
-//Определение функции, подсчёт количества символов 
-int kol( const char* filename1, const int n) {	
-	const int len = 300;
-	char s[len];
-	int amount = 0;
-	int last_word = 0;
 
 	FILE* F2;
-//Открытие файла F2 для чтения
-	if ((F2 = fopen(filename1, "r+")) == NULL) {
+
+	//Открытие файла F2 для записи 
+
+	if ((F2 = fopen(filename1, "wt")) == NULL) {
+
 		puts("Ошибка открытия вых. файла\n");
+
 		return 1;
+
 	}
-//Читаем файл, пока не достигнем конца
-	while (fgets(s, len, F2)) {	
-//Переменная для подсчёта количества символов
-		amount = 0;			
-//Прохождение по строке
-		for (int i = 0; i < strlen(s); i++) {
-//Если не встретился пробел увеличиваем счётчик
-			if (s[i] != ' ' ) {
-//Если символ равен знаку препинания уменьшаем счётчик
-				if (s[i] == ',' || s[i] == '.' || s[i] == '!' || s[i] == '?') amount--; 
-					amount++;
-				}
-//Если встретился – обнуляем
-				else amount = 0;										
+
+	//i – номер строки, j – счётчик строк 
+
+	int k, j = 0;
+	
+	k=4;
+
+	//Читаем файл F1 пока не дойдём до конца файла 
+
+	while (fgets(s, len, finput)) {
+
+		//Если дошли до нужной строки… 
+		
+		if (j >= k) {
+
+			//то копируем её во второй файл 
+
+			fputs(s, F2);
+
 		}
+
+		j++;
+
 	}
-//Если количества символов больше нуля, то присеваем переменной значение, за исключением нуль-символа
-	if (amount > 0)	last_word = amount-1;
+
+	puts("\nВторой файл: \n");
+
+	fclose(finput);
+
 	fclose(F2);
-cout << endl;
-	cout << "Кол-во символов в последнем слове: " << last_word << endl; }
+	n = n - k;
+
+	//Вызов функции печати 
+
+	print(filename1, n);
+
+}
+
+//Определение функции, подсчёт количества символов  
+
+int kol(const char* filename1, const int n) {
+
+	const int len = 300;
+
+	char s[len];
+
+	int amount = 0;
+
+	int last_word = 0;
+
+
+
+	FILE* F2;
+
+	//Открытие файла F2 для чтения 
+
+	if ((F2 = fopen(filename1, "r+")) == NULL) {
+
+		puts("Ошибка открытия вых. файла\n");
+
+		return 1;
+
+	}
+
+	//Читаем файл, пока не достигнем конца 
+
+	while (fgets(s, len, F2)) {
+
+		//Переменная для подсчёта количества символов 
+
+		amount = 0;
+
+		//Прохождение по строке 
+
+		for (int i = 0; i < strlen(s); i++) {
+
+			//Если не встретился пробел увеличиваем счётчик 
+
+			if (s[i] != ' ') {
+
+				//Если символ равен знаку препинания уменьшаем счётчик 
+
+				if (s[i] == ',' || s[i] == '.' || s[i] == '!' || s[i] == '?') amount--;
+
+				amount++;
+
+			}
+
+			//Если встретился – обнуляем 
+
+			else amount = 0;
+
+		}
+
+	}
+
+	//Если количества символов больше нуля, то присеваем переменной значение, за исключением нуль-символа 
+
+	if (amount > 0)	last_word = amount - 1;
+
+	fclose(F2);
+
+	cout << endl;
+
+	cout << "Кол-во символов в последнем слове: " << last_word << endl;
+}
