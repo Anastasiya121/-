@@ -21,7 +21,7 @@ int main() {
 			se += s;
 			i++;
 		} 
-		while (fabs(se) < e);
+		while (fabs(se-s) < e); 
 // Вычисление точного значения функции
              y = (x * atan(x)) - log(sqrt(1 + (pow(x, 2))));
 //Вывод результатов
